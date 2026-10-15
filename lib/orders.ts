@@ -10,6 +10,13 @@ export type Order = {
   amount: number;
   email?: string;
   items?: { title: string; quantity: number; unit_price: number }[];
+  customer?: {
+    nombre?: string;
+    correo?: string;
+    whatsapp?: string;
+    direccion?: string;
+    comuna?: string;
+  };
   createdAt?: string;
 };
 
@@ -35,6 +42,7 @@ export async function saveOrder(order: Order): Promise<void> {
     amount: order.amount,
     email: order.email ?? null,
     items: order.items ?? [],
+    customer: order.customer ?? {},
     created_at: new Date().toISOString(),
   };
 
@@ -76,6 +84,7 @@ export async function listOrders(): Promise<Order[]> {
     amount: r.amount,
     email: r.email,
     items: r.items,
+    customer: r.customer ?? {},
     createdAt: r.created_at,
   }));
 }

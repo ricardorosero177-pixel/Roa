@@ -34,6 +34,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "Carrito vacío" }, { status: 400 });
     }
 
+    // Datos del cliente (para contactarlo y coordinar la entrega)
+    const c = (body.customer ?? {}) as Record<string, string>;
+    const clean = (v: unknown, max = 120) => String(v ?? "").trim().slice(0, max);
+    const customer = {
+      name: clean(c.name),
+      surname: clean(c.surname),
+      email: clean(c.email, 160),
+      whatsapp: clean(c.whatsapp, 40),
+      direccion: clean(c.direccion, 200),
+      comuna: clean(c.comuna, 120),
+    };
+    const phoneNumber = customer.whatsapp.replace(/\D/g, "").replace(/^56/, "");
+
     // Detectar la dirección real desde la petición (funciona en Vercel sin configurar nada).
     const fwdHost = request.headers.get("x-forwarded-host") || request.headers.get("host");
     const fwdProto = request.headers.get("x-forwarded-proto") || "https";
@@ -54,6 +67,20 @@ export async function POST(request: Request) {
         statement_descriptor: "RÖA Home & Style",
         notification_url: `${base}/api/mercadopago/webhook`,
         external_reference: `roa-${Date.now()}`,
+        payer: {
+          name: customer.name,
+          surname: customer.surname,
+          email: customer.email || undefined,
+          phone: phoneNumber ? { area_code: "56", number: phoneNumber } : undefined,
+          address: customer.direccion ? { street_name: customer.direccion } : undefined,
+        },
+        metadata: {
+          nombre: `${customer.name} ${customer.surname}`.trim(),
+          correo: customer.email,
+          whatsapp: customer.whatsapp,
+          direccion: customer.direccion,
+          comuna: customer.comuna,
+        },
       },
     });
 

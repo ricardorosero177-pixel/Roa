@@ -136,8 +136,15 @@ export default async function AdminPage() {
                   <span className="ml-2 text-sm text-tinta-50">#{o.mpPaymentId}</span>
                 </p>
                 <p className="text-sm text-tinta-70">
-                  {o.email ?? "sin correo"} · {(o.items ?? []).map((it) => `${it.quantity}× ${it.title}`).join(", ")}
+                  {(o.items ?? []).map((it) => `${it.quantity}× ${it.title}`).join(", ")}
                 </p>
+                {o.customer?.nombre && (
+                  <p className="mt-1 text-sm text-tinta">
+                    {o.customer.nombre} · {o.customer.whatsapp} · {o.customer.correo}
+                    <br />
+                    {o.customer.direccion}, {o.customer.comuna}
+                  </p>
+                )}
               </div>
               <div className="text-right">
                 <p className="font-display text-lg">{formatCLP(o.amount)}</p>

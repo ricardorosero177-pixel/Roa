@@ -29,16 +29,24 @@ export async function POST(request: Request) {
 
     const payment = await new Payment(client).get({ id: String(dataId) });
 
+    const meta = (payment.metadata ?? {}) as Record<string, string>;
     await saveOrder({
       mpPaymentId: String(payment.id),
       status: String(payment.status ?? "unknown"),
       amount: Number(payment.transaction_amount ?? 0),
-      email: payment.payer?.email ?? undefined,
+      email: payment.payer?.email ?? meta.correo ?? undefined,
       items: (payment.additional_info?.items ?? []).map((it) => ({
         title: String(it.title ?? ""),
         quantity: Number(it.quantity ?? 1),
         unit_price: Number(it.unit_price ?? 0),
       })),
+      customer: {
+        nombre: meta.nombre,
+        correo: meta.correo,
+        whatsapp: meta.whatsapp,
+        direccion: meta.direccion,
+        comuna: meta.comuna,
+      },
     });
 
     return NextResponse.json({ ok: true });

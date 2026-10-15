@@ -51,6 +51,7 @@ create table if not exists public.orders (
   amount numeric not null default 0,
   email text,
   items jsonb not null default '[]'::jsonb,
+  customer jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now()
 );
 
