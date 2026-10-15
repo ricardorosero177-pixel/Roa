@@ -34,7 +34,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "Carrito vacío" }, { status: 400 });
     }
 
-    const base = site.url.replace(/\/$/, "");
+    // Detectar la dirección real desde la petición (funciona en Vercel sin configurar nada).
+    const fwdHost = request.headers.get("x-forwarded-host") || request.headers.get("host");
+    const fwdProto = request.headers.get("x-forwarded-proto") || "https";
+    const base = (fwdHost ? `${fwdProto}://${fwdHost}` : site.url).replace(/\/$/, "");
     const isPublic = base.startsWith("https://");
 
     const preference = new Preference(client);
