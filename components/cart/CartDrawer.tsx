@@ -86,7 +86,10 @@ export function CartDrawer() {
               <span className="text-tinta-70">Total</span>
               <span className="font-display text-xl">{formatCLP(total)}</span>
             </div>
-            <Link href="/carrito" onClick={close} className="btn-dorado w-full">
+            <Link href="/tienda" onClick={close} className="btn-ghost w-full">
+              Seguir comprando
+            </Link>
+            <Link href="/carrito" onClick={close} className="btn-dorado mt-3 w-full">
               Ir a pagar
             </Link>
             <p className="mt-2 text-center text-xs text-tinta-70">
