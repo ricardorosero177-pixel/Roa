@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
+    // Las imágenes del CDN ya vienen optimizadas (tamaño y formato).
+    // Las servimos directo para máxima compatibilidad y que siempre carguen.
+    unoptimized: true,
     remotePatterns: [
       { protocol: "https", hostname: "d2uil25qo43m6t.cloudfront.net" },
     ],
@@ -17,6 +20,26 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/productos", destination: "/tienda", permanent: true },
+    ];
+  },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+          },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+        ],
+      },
     ];
   },
 };

@@ -83,7 +83,7 @@ export default async function PostPage({
         ))}
       </div>
 
-      <div className="mt-12 rounded-2xl bg-arena p-8 text-center">
+      <div className="mt-12 rounded-2xl border border-linea bg-white p-8 text-center">
         <h2 className="font-display text-2xl">Dale vida a tu espacio</h2>
         <p className="mx-auto mt-2 max-w-md text-tinta-70">
           Descubre las piezas que hacen la diferencia en nuestra tienda.

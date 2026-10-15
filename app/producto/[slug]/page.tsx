@@ -83,7 +83,7 @@ export default async function ProductoPage({
       </nav>
 
       <div className="grid gap-10 md:grid-cols-2">
-        <div className="relative aspect-square overflow-hidden rounded-3xl bg-arena">
+        <div className="relative aspect-square overflow-hidden rounded-3xl bg-white">
           <Image
             src={product.image}
             alt={product.name}
@@ -111,7 +111,7 @@ export default async function ProductoPage({
           <ProductActions product={product} />
 
           <p className="mt-6 text-xs text-tinta-70">
-            Al agregar al carrito podrás solicitar una cotización. Te contactamos para coordinar pago y envío.
+            Al agregar al carrito podrás ir a pagar con MercadoPago. Envío gratis en Santiago.
           </p>
         </div>
       </div>
@@ -119,7 +119,7 @@ export default async function ProductoPage({
       {related.length > 0 && (
         <section className="mt-20">
           <h2 className="mb-6 font-display text-2xl">También te puede gustar</h2>
-          <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-4">
             {related.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}

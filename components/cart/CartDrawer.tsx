@@ -13,14 +13,14 @@ export function CartDrawer() {
       <div
         aria-hidden={!isOpen}
         onClick={close}
-        className={`fixed inset-0 z-50 bg-black/40 transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[80] bg-black/40 transition-opacity duration-300 ${
           isOpen ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       />
       <aside
         role="dialog"
         aria-label="Carrito de compras"
-        className={`fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col bg-white shadow-2xl transition-transform duration-300 ${
+        className={`fixed right-0 top-0 z-[90] flex h-full w-full max-w-md flex-col bg-white shadow-2xl transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -44,7 +44,7 @@ export function CartDrawer() {
             <ul className="space-y-4">
               {items.map((item) => (
                 <li key={item.id} className="flex gap-3">
-                  <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-arena">
+                  <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-white">
                     <Image src={item.image} alt={item.name} fill sizes="80px" className="object-cover" />
                   </div>
                   <div className="flex-1">
@@ -87,10 +87,10 @@ export function CartDrawer() {
               <span className="font-display text-xl">{formatCLP(total)}</span>
             </div>
             <Link href="/carrito" onClick={close} className="btn-dorado w-full">
-              Solicitar cotización
+              Ir a pagar
             </Link>
             <p className="mt-2 text-center text-xs text-tinta-70">
-              Te contactamos para coordinar pago y envío.
+              Pago seguro con MercadoPago · Envío gratis en Santiago.
             </p>
           </div>
         )}

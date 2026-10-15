@@ -6,15 +6,15 @@ const CDN =
 export const categories: Category[] = [
   {
     slug: "hogar-y-decoracion",
-    name: "Hogar y decoración",
+    name: "Hogar & Decoración",
     description:
-      "Floreros, esculturas y figuras decorativas de líneas simples para dar calma y carácter a tus espacios.",
+      "Floreros, esculturas y figuras de líneas simples para dar calma y carácter a tus espacios.",
   },
   {
-    slug: "detalles-accesorios",
-    name: "Detalles y accesorios",
+    slug: "aromas-sensaciones",
+    name: "Aromas & Sensaciones",
     description:
-      "Pequeños detalles textiles y accesorios que completan tu estilo y el de tu hogar.",
+      "Aromas que despiertan emociones y transforman la energía de cada rincón. Muy pronto.",
   },
 ];
 
@@ -130,55 +130,6 @@ export const products: Product[] = [
     description:
       "Escultura de corazón con diseño moderno y minimalista. Un símbolo cálido que aporta emoción sin recargar la decoración.",
     stock: 12,
-  },
-  {
-    id: 144111,
-    slug: "scrunchie-decorativo-textil",
-    name: "Scrunchie decorativo textil",
-    price: 1690,
-    image: `${CDN}/202601131345418371-img-20260113-wa0008.jpg`,
-    categorySlug: "detalles-accesorios",
-    shortDescription: "Suavidad y estilo para tu día a día.",
-    description:
-      "Scrunchie textil decorativo, un accesorio delicado que combina comodidad y estilo. El detalle perfecto para complementar tu look.",
-    stock: 30,
-  },
-  {
-    id: 144112,
-    slug: "bolso-mujer",
-    name: "Bolso mujer",
-    price: 12990,
-    image: `${CDN}/202601131344144134-img-20260113-wa0009.jpg`,
-    categorySlug: "detalles-accesorios",
-    shortDescription: "Diseño atemporal para acompañarte a todas partes.",
-    description:
-      "Bolso de mujer de estilo sobrio y atemporal. Funcional y elegante, pensado para combinar con cualquier outfit y acompañarte cada día.",
-    featured: true,
-    stock: 9,
-  },
-  {
-    id: 144118,
-    slug: "mono-decorativo-textil",
-    name: "Mono decorativo textil",
-    price: 1290,
-    image: `${CDN}/202601131354086548-img-20260113-wa0010.jpg`,
-    categorySlug: "detalles-accesorios",
-    shortDescription: "Un detalle tierno y suave.",
-    description:
-      "Mono decorativo textil, un pequeño detalle encantador para sumar calidez a tus espacios o regalar con cariño.",
-    stock: 25,
-  },
-  {
-    id: 144119,
-    slug: "llavero-decorativo-textil",
-    name: "Llavero decorativo textil",
-    price: 1990,
-    image: `${CDN}/202601131349187017-img-20260113-wa0011.jpg`,
-    categorySlug: "detalles-accesorios",
-    shortDescription: "Lleva un detalle RÖA contigo.",
-    description:
-      "Llavero decorativo textil, el accesorio ideal para personalizar tus llaves o tu bolso con un toque de estilo RÖA.",
-    stock: 40,
   },
 ];
 

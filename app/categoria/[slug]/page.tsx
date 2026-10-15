@@ -57,11 +57,23 @@ export default async function CategoriaPage({
       <h1 className="font-display text-4xl">{category.name}</h1>
       <p className="mt-2 max-w-xl text-tinta-70">{category.description}</p>
 
-      <div className="mt-8 grid grid-cols-2 gap-5 lg:grid-cols-4">
-        {products.map((p) => (
-          <ProductCard key={p.id} product={p} />
-        ))}
-      </div>
+      {products.length === 0 ? (
+        <div className="mt-10 rounded-2xl border border-linea bg-white p-12 text-center">
+          <p className="eyebrow">Muy pronto</p>
+          <h2 className="mt-3 font-display text-2xl">Estamos preparando esta colección</h2>
+          <p className="mx-auto mt-3 max-w-md text-tinta-70">
+            Estamos curando con calma los aromas que llegarán a RÖA. Escríbenos y te avisamos cuando
+            estén disponibles.
+          </p>
+          <Link href="/tienda" className="btn-dorado mt-6">Ver el resto de la tienda</Link>
+        </div>
+      ) : (
+        <div className="mt-8 grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-4">
+          {products.map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

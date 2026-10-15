@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useCart } from "./cart/CartContext";
 import { whatsappLink } from "@/lib/site";
 import { trackViewContent, trackAddToCart } from "@/lib/track";
@@ -8,15 +9,15 @@ import type { Product } from "@/lib/types";
 
 export function ProductActions({ product }: { product: Product }) {
   const { add } = useCart();
+  const router = useRouter();
   const [qty, setQty] = useState(1);
-  const [added, setAdded] = useState(false);
 
   useEffect(() => {
     trackViewContent(product);
   }, [product]);
 
   const wsp = whatsappLink(
-    `Hola RÖA 👋 Me interesa "${product.name}". ¿Me cuentas cómo comprarlo?`,
+    `Hola RÖA 👋 Quiero comprar "${product.name}". ¿Me ayudas con el pago y el envío?`,
   );
 
   return (
@@ -43,20 +44,20 @@ export function ProductActions({ product }: { product: Product }) {
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row">
+        <a href={wsp} target="_blank" rel="noopener" className="btn-dorado flex-1">
+          Comprar por WhatsApp
+        </a>
         <button
-          className="btn-dorado flex-1"
+          type="button"
+          className="btn-ghost flex-1"
           onClick={() => {
             add(product, qty);
             trackAddToCart(product);
-            setAdded(true);
-            setTimeout(() => setAdded(false), 1500);
+            router.push("/carrito");
           }}
         >
-          {added ? "¡Agregado al carrito!" : "Agregar al carrito"}
+          Agregar al carrito
         </button>
-        <a href={wsp} target="_blank" rel="noopener" className="btn-ghost flex-1">
-          Consultar por WhatsApp
-        </a>
       </div>
     </div>
   );

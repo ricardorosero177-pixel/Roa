@@ -53,12 +53,34 @@ export default async function QuienesSomosPage() {
         </div>
       </section>
 
+      {/* Misión y visión */}
+      <section className="bg-arena-100">
+        <div className="container-roa grid gap-8 py-16 md:grid-cols-2">
+          <div className="rounded-2xl bg-white p-8">
+            <p className="eyebrow">Misión</p>
+            <p className="mt-4 text-lg leading-relaxed text-tinta-70">
+              Crear valor emocional a través del diseño, el aroma y los detalles, ofreciendo
+              productos cuidadosamente seleccionados para quienes buscan bienestar, armonía y belleza
+              en su día a día.
+            </p>
+          </div>
+          <div className="rounded-2xl bg-white p-8">
+            <p className="eyebrow">Visión</p>
+            <p className="mt-4 text-lg leading-relaxed text-tinta-70">
+              Consolidar a RÖA como una marca de estilo de vida reconocida por su enfoque en el
+              bienestar emocional y la estética consciente, sin perder su esencia artesanal, cercana y
+              humana.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section className="bg-arena">
         <div className="container-roa grid gap-8 py-16 md:grid-cols-3">
           {[
             ["Belleza simple", "Diseños que calman, sin recargar."],
             ["Elegidos con intención", "Cada pieza tiene un porqué."],
-            ["Estilo atemporal", "Objetos que perduran, no que pasan de moda."],
+            ["Cercanía humana", "Un trato cálido, no un número más."],
           ].map(([t, d]) => (
             <div key={t} className="rounded-2xl bg-white p-8">
               <h2 className="font-display text-xl">{t}</h2>

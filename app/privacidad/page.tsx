@@ -31,7 +31,7 @@ export default function PrivacidadPage() {
         <section>
           <h2 className="font-display text-xl text-tinta">Qué datos recopilamos</h2>
           <ul className="mt-2 list-disc space-y-1 pl-5">
-            <li>Datos de contacto que entregas en el formulario de cotización: nombre, correo y teléfono.</li>
+            <li>Datos que entregas al comprar o contactarnos: nombre, correo y teléfono.</li>
             <li>El detalle de tu consulta o los productos de tu carrito.</li>
             <li>Datos de navegación y cookies, solo si aceptas (analítica y publicidad).</li>
           </ul>
@@ -40,7 +40,7 @@ export default function PrivacidadPage() {
         <section>
           <h2 className="font-display text-xl text-tinta">Para qué los usamos</h2>
           <ul className="mt-2 list-disc space-y-1 pl-5">
-            <li>Responder tus cotizaciones y coordinar pago y envío.</li>
+            <li>Procesar tus compras y coordinar la entrega.</li>
             <li>Mejorar nuestra tienda y medir nuestras campañas (con tu consentimiento).</li>
             <li>Enviarte información de productos solo si lo autorizas.</li>
           </ul>
