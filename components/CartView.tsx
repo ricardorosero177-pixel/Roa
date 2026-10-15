@@ -160,11 +160,14 @@ export function CartView() {
         <p className="mt-3 text-sm text-tinta-70">
           Pago seguro con MercadoPago (tarjeta de crédito o débito). Envío gratis en Santiago.
         </p>
+        <Link href="/tienda" className="btn-ghost mt-4 w-full">
+          Seguir comprando
+        </Link>
         <button
           type="button"
           onClick={payWithMercadoPago}
           disabled={paying}
-          className="btn-dorado mt-4 w-full disabled:opacity-60"
+          className="btn-dorado mt-3 w-full disabled:opacity-60"
         >
           {paying ? "Redirigiendo a MercadoPago..." : "Ir a pagar"}
         </button>
