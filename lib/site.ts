@@ -17,8 +17,8 @@ export const site = {
   city: "La Florida, Santiago",
   contact: {
     email: "roa.home.style@gmail.com",
-    phoneDisplay: "+56 9 2613 8578",
-    whatsapp: "56926138578",
+    phoneDisplay: "+56 9 7999 1519",
+    whatsapp: "56979991519",
     instagram: "roa.home.style",
     instagramUrl: "https://instagram.com/roa.home.style",
   },
