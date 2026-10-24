@@ -1,4 +1,5 @@
 import type { Category, Product } from "./types";
+import { getSupabase } from "./supabase";
 
 const CDN =
   "https://d2uil25qo43m6t.cloudfront.net/t/w_800,h_800,q_auto,f_auto,c_fill,b_rgb:ffffff/shops/fotos";
@@ -133,23 +134,73 @@ export const products: Product[] = [
   },
 ];
 
-// --- Helpers (async para permitir migrar a base de datos sin cambiar las páginas) ---
+// --- Helpers ---
+// Con Supabase configurado, los productos se leen de la tabla `products`
+// (editables desde /admin). Sin Supabase, se usa la lista de arriba.
 
+type ProductRow = {
+  id: number;
+  slug: string;
+  name: string;
+  price: number;
+  image: string;
+  category_slug: string;
+  short_description: string;
+  description: string;
+  featured: boolean;
+  stock: number;
+  active: boolean;
+};
+
+export function rowToProduct(r: ProductRow): Product {
+  return {
+    id: r.id,
+    slug: r.slug,
+    name: r.name,
+    price: r.price,
+    image: r.image,
+    categorySlug: r.category_slug,
+    shortDescription: r.short_description,
+    description: r.description,
+    featured: r.featured,
+    stock: r.stock,
+    active: r.active,
+  };
+}
+
+/** Todos los productos, incluidos los ocultos (para el panel). */
+export async function getAllProducts(): Promise<Product[]> {
+  const supabase = getSupabase();
+  if (!supabase) return products.map((p) => ({ ...p, active: true }));
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .order("sort_order", { ascending: true })
+    .order("id", { ascending: true });
+  if (error) {
+    console.error("[catalogo] error al listar:", error.message);
+    return products;
+  }
+  return (data as ProductRow[]).map(rowToProduct);
+}
+
+/** Productos visibles en la tienda. */
 export async function getProducts(): Promise<Product[]> {
-  return products;
+  return (await getAllProducts()).filter((p) => p.active !== false);
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | undefined> {
-  return products.find((p) => p.slug === slug);
+  return (await getProducts()).find((p) => p.slug === slug);
 }
 
 export async function getFeaturedProducts(limit = 6): Promise<Product[]> {
-  const feat = products.filter((p) => p.featured);
-  return (feat.length ? feat : products).slice(0, limit);
+  const all = await getProducts();
+  const feat = all.filter((p) => p.featured);
+  return (feat.length ? feat : all).slice(0, limit);
 }
 
 export async function getProductsByCategory(slug: string): Promise<Product[]> {
-  return products.filter((p) => p.categorySlug === slug);
+  return (await getProducts()).filter((p) => p.categorySlug === slug);
 }
 
 export async function getCategories(): Promise<Category[]> {

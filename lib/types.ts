@@ -15,6 +15,15 @@ export type Product = {
   description: string;
   featured?: boolean;
   stock?: number;
+  active?: boolean; // false = oculto en la tienda (solo visible en el panel)
+};
+
+export type Review = {
+  id?: number;
+  name: string;
+  text: string;
+  rating: number; // 1 a 5
+  visible?: boolean;
 };
 
 export type Post = {
@@ -26,6 +35,7 @@ export type Post = {
   cover: string;
   readingMinutes: number;
   content: string[]; // párrafos
+  published?: boolean; // false = borrador
 };
 
 export type Quote = {

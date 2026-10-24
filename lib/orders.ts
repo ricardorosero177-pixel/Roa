@@ -9,7 +9,7 @@ export type Order = {
   status: string;
   amount: number;
   email?: string;
-  items?: { title: string; quantity: number; unit_price: number }[];
+  items?: { id?: string; title: string; quantity: number; unit_price: number }[];
   customer?: {
     nombre?: string;
     correo?: string;
@@ -17,7 +17,19 @@ export type Order = {
     direccion?: string;
     comuna?: string;
   };
+  fulfillment?: Fulfillment;
+  notes?: string;
   createdAt?: string;
+};
+
+/** Estado de despacho, que se maneja a mano desde el panel. */
+export const fulfillmentSteps = ["nuevo", "preparando", "enviado", "entregado"] as const;
+export type Fulfillment = (typeof fulfillmentSteps)[number];
+export const fulfillmentLabel: Record<Fulfillment, string> = {
+  nuevo: "Nuevo",
+  preparando: "Preparando",
+  enviado: "Enviado",
+  entregado: "Entregado",
 };
 
 const LOCAL_FILE = path.join(process.cwd(), ".data", "orders.json");
@@ -59,10 +71,61 @@ export async function saveOrder(order: Order): Promise<void> {
     return;
   }
 
+  // Sin created_at: MercadoPago avisa varias veces por el mismo pago y la fecha
+  // debe quedar la del primer aviso (la pone la base de datos al insertar).
+  // Tampoco se tocan fulfillment ni notes, que se editan desde el panel.
+  const upsertRow: Partial<typeof row> = { ...row };
+  delete upsertRow.created_at;
   const { error } = await supabase
     .from("orders")
-    .upsert(row, { onConflict: "mp_payment_id" });
-  if (error) console.error("[orden] error Supabase:", error.message);
+    .upsert(upsertRow, { onConflict: "mp_payment_id" });
+  if (error) {
+    console.error("[orden] error Supabase:", error.message);
+    return;
+  }
+
+  if (order.status === "approved") await applyStockOnce(order);
+}
+
+/**
+ * Descuenta el stock de un pedido pagado, una sola vez aunque el webhook
+ * llegue repetido: solo quien logra marcar stock_applied=true descuenta.
+ */
+async function applyStockOnce(order: Order): Promise<void> {
+  const supabase = getSupabase();
+  if (!supabase) return;
+  const { data, error } = await supabase
+    .from("orders")
+    .update({ stock_applied: true })
+    .eq("mp_payment_id", order.mpPaymentId)
+    .eq("stock_applied", false)
+    .select("id");
+  if (error || !data?.length) return;
+
+  for (const it of order.items ?? []) {
+    const productId = Number(it.id);
+    if (!Number.isInteger(productId) || productId <= 0) continue;
+    const { error: rpcError } = await supabase.rpc("decrement_stock", {
+      p_id: productId,
+      p_qty: it.quantity,
+    });
+    if (rpcError) console.error("[orden] error al descontar stock:", rpcError.message);
+  }
+}
+
+export async function updateOrderFulfillment(
+  mpPaymentId: string,
+  fulfillment: Fulfillment,
+  notes: string,
+): Promise<boolean> {
+  const supabase = getSupabase();
+  if (!supabase) return false;
+  const { error } = await supabase
+    .from("orders")
+    .update({ fulfillment, notes })
+    .eq("mp_payment_id", mpPaymentId);
+  if (error) console.error("[orden] error al actualizar:", error.message);
+  return !error;
 }
 
 export async function listOrders(): Promise<Order[]> {
@@ -85,6 +148,8 @@ export async function listOrders(): Promise<Order[]> {
     email: r.email,
     items: r.items,
     customer: r.customer ?? {},
+    fulfillment: r.fulfillment ?? "nuevo",
+    notes: r.notes ?? "",
     createdAt: r.created_at,
   }));
 }

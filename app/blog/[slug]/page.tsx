@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { posts, getPostBySlug } from "@/lib/posts";
+import { getPosts, getPostBySlug } from "@/lib/posts";
 import { JsonLd } from "@/components/JsonLd";
 import { blogPostingSchema, breadcrumbSchema } from "@/lib/seo";
 
-export function generateStaticParams() {
-  return posts.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  return (await getPosts()).map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({

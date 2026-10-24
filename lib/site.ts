@@ -9,8 +9,8 @@ export const site = {
   tagline: "Bienestar cotidiano para tu hogar",
   description:
     "RÖA es una marca de bienestar y estilo de vida. Decoración, aromas y detalles elegidos con intención para transformar tus espacios y rutinas en momentos de calma, armonía y belleza cotidiana.",
-  // Dominio público. Cambia a tu dominio propio cuando lo tengas (ej: https://roahome.cl)
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://roa.vercel.app",
+  // Dominio público (se puede sobrescribir con NEXT_PUBLIC_SITE_URL)
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://somosroa.cl",
   locale: "es_CL",
   currency: "CLP",
   country: "CL",

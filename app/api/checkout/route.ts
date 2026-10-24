@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Preference } from "mercadopago";
 import { mpClient } from "@/lib/mercadopago";
 import { site } from "@/lib/site";
+import { getProducts } from "@/lib/catalog";
 
 export const runtime = "nodejs";
 
@@ -18,17 +19,32 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json().catch(() => ({}));
-    const rawItems = Array.isArray(body.items) ? body.items.slice(0, 50) : [];
+    const rawItems: Partial<Item>[] = Array.isArray(body.items) ? body.items.slice(0, 50) : [];
 
-    const items = rawItems
-      .map((it: Partial<Item>) => ({
-        id: String(it?.id ?? ""),
-        title: String(it?.name ?? "Producto").slice(0, 200),
-        quantity: Math.min(999, Math.max(1, Math.floor(Number(it?.qty) || 1))),
-        unit_price: Math.max(0, Math.floor(Number(it?.price) || 0)),
+    // Nombre y precio salen del catálogo, nunca del navegador: así nadie puede
+    // pagar un precio modificado. El navegador solo aporta id y cantidad.
+    const catalog = new Map((await getProducts()).map((p) => [p.id, p]));
+    const items = [];
+    for (const it of rawItems) {
+      const product = catalog.get(Number(it?.id));
+      if (!product) continue;
+      const quantity = Math.min(999, Math.max(1, Math.floor(Number(it?.qty) || 1)));
+      const stock = product.stock ?? 0;
+      if (stock < quantity) {
+        const error =
+          stock > 0
+            ? `De "${product.name}" solo quedan ${stock}. Ajusta la cantidad en el carrito.`
+            : `"${product.name}" está agotado. Quítalo del carrito o escríbenos por WhatsApp.`;
+        return NextResponse.json({ ok: false, error }, { status: 409 });
+      }
+      items.push({
+        id: String(product.id),
+        title: product.name.slice(0, 200),
+        quantity,
+        unit_price: product.price,
         currency_id: "CLP",
-      }))
-      .filter((it: { unit_price: number }) => it.unit_price > 0);
+      });
+    }
 
     if (items.length === 0) {
       return NextResponse.json({ ok: false, error: "Carrito vacío" }, { status: 400 });

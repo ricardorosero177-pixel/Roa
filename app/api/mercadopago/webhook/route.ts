@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { Payment } from "mercadopago";
 import { mpClient } from "@/lib/mercadopago";
 import { saveOrder } from "@/lib/orders";
@@ -36,6 +37,7 @@ export async function POST(request: Request) {
       amount: Number(payment.transaction_amount ?? 0),
       email: payment.payer?.email ?? meta.correo ?? undefined,
       items: (payment.additional_info?.items ?? []).map((it) => ({
+        id: String(it.id ?? ""),
         title: String(it.title ?? ""),
         quantity: Number(it.quantity ?? 1),
         unit_price: Number(it.unit_price ?? 0),
@@ -48,6 +50,9 @@ export async function POST(request: Request) {
         comuna: meta.comuna,
       },
     });
+
+    // Un pago aprobado descuenta stock: la tienda se actualiza en la próxima visita.
+    if (payment.status === "approved") revalidatePath("/", "layout");
 
     return NextResponse.json({ ok: true });
   } catch (e) {

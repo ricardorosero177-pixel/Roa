@@ -2,11 +2,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { getProducts } from "@/lib/catalog";
 import { getPosts } from "@/lib/posts";
+import { getReviews } from "@/lib/reviews";
 import { ProductCard } from "@/components/ProductCard";
 import { whatsappLink } from "@/lib/site";
 
 export default async function HomePage() {
-  const [products, posts] = await Promise.all([getProducts(), getPosts()]);
+  const [products, posts, reviews] = await Promise.all([
+    getProducts(),
+    getPosts(),
+    getReviews(),
+  ]);
 
   return (
     <>
@@ -183,26 +188,12 @@ export default async function HomePage() {
           <h2 className="mt-3 font-display text-4xl">Lo que dicen nuestras clientas</h2>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {[
-            {
-              name: "Camila Rojas",
-              text: "Tuve dudas al principio pero todo salió bien. Me escribieron para coordinar y la entrega fue sin problema, lo recomiendo.",
-            },
-            {
-              name: "Evelyn",
-              text: "Muy buena, me llegaron y hermosos los productos.",
-            },
-            {
-              name: "Javiera Sandoval",
-              text: "Me encantó el de corazón, se ve muy hermoso en mi pieza. ¡Me encanta!",
-            },
-            {
-              name: "Kendris Grijalva",
-              text: "Me encantó el florero 😍 es tal cual como en la foto, súper lindo. Le dio un toque muy bonito a mi espacio. ¡Lo recomiendo!",
-            },
-          ].map((r) => (
-            <figure key={r.name} className="flex flex-col rounded-2xl border border-linea bg-white p-6">
-              <p className="text-dorado">★★★★★</p>
+          {reviews.map((r) => (
+            <figure key={r.id ?? r.name} className="flex flex-col rounded-2xl border border-linea bg-white p-6">
+              <p className="text-dorado" aria-label={`${r.rating} de 5 estrellas`}>
+                {"★".repeat(r.rating)}
+                <span className="text-linea">{"★".repeat(5 - r.rating)}</span>
+              </p>
               <blockquote className="mt-3 flex-1 leading-relaxed text-tinta">&ldquo;{r.text}&rdquo;</blockquote>
               <figcaption className="mt-4 text-sm text-tinta-50">— {r.name}</figcaption>
             </figure>

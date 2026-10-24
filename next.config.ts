@@ -15,7 +15,16 @@ const nextConfig: NextConfig = {
     unoptimized: true,
     remotePatterns: [
       { protocol: "https", hostname: "d2uil25qo43m6t.cloudfront.net" },
+      // Fotos subidas desde el panel (Supabase Storage)
+      { protocol: "https", hostname: "*.supabase.co" },
     ],
+  },
+  experimental: {
+    serverActions: {
+      // El panel achica las fotos antes de subirlas; esto deja margen.
+      // (Vercel acepta como máximo 4,5 MB por petición.)
+      bodySizeLimit: "4mb",
+    },
   },
   async redirects() {
     return [

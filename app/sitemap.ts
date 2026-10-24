@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next";
 import { site } from "@/lib/site";
-import { products, categories } from "@/lib/catalog";
-import { posts } from "@/lib/posts";
+import { categories, getProducts } from "@/lib/catalog";
+import { getPosts } from "@/lib/posts";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [products, posts] = await Promise.all([getProducts(), getPosts()]);
   const base = site.url.replace(/\/$/, "");
   const now = new Date();
 

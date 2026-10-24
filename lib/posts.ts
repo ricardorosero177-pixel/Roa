@@ -1,4 +1,5 @@
 import type { Post } from "./types";
+import { getSupabase } from "./supabase";
 
 const CDN =
   "https://d2uil25qo43m6t.cloudfront.net/t/w_1200,h_675,q_auto,f_auto,c_fill,b_rgb:ffffff/shops/fotos";
@@ -59,10 +60,53 @@ export const posts: Post[] = [
   },
 ];
 
+// Con Supabase configurado, los artículos se leen de la tabla `posts`
+// (editables desde /admin). Sin Supabase, se usa la lista de arriba.
+
+type PostRow = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  date: string;
+  cover: string;
+  reading_minutes: number;
+  content: string;
+  published: boolean;
+};
+
+function rowToPost(r: PostRow): Post {
+  return {
+    slug: r.slug,
+    title: r.title,
+    excerpt: r.excerpt,
+    category: r.category,
+    date: r.date,
+    cover: r.cover,
+    readingMinutes: r.reading_minutes,
+    // En la base de datos los párrafos se separan con una línea en blanco.
+    content: r.content.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean),
+    published: r.published,
+  };
+}
+
+/** Todos los artículos, incluidos los borradores (para el panel). */
+export async function getAllPosts(): Promise<Post[]> {
+  const supabase = getSupabase();
+  let list: Post[] = posts.map((p) => ({ ...p, published: true }));
+  if (supabase) {
+    const { data, error } = await supabase.from("posts").select("*");
+    if (error) console.error("[blog] error al listar:", error.message);
+    else list = (data as PostRow[]).map(rowToPost);
+  }
+  return list.sort((a, b) => (a.date < b.date ? 1 : -1));
+}
+
+/** Artículos publicados, del más nuevo al más antiguo. */
 export async function getPosts(): Promise<Post[]> {
-  return [...posts].sort((a, b) => (a.date < b.date ? 1 : -1));
+  return (await getAllPosts()).filter((p) => p.published !== false);
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | undefined> {
-  return posts.find((p) => p.slug === slug);
+  return (await getPosts()).find((p) => p.slug === slug);
 }
