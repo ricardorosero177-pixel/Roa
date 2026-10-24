@@ -1,16 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
-import { nav } from "@/lib/site";
+import { nav, adminHintCookie } from "@/lib/site";
 import { useCart } from "./cart/CartContext";
 import { Logo } from "./Logo";
+
+// Enlace "Panel" solo para quien inició sesión en /admin (ver adminHintCookie).
+const noSubscribe = () => () => {};
+const hasAdminHint = () =>
+  document.cookie.split("; ").some((c) => c === `${adminHintCookie}=1`);
 
 export function Header() {
   const { count, open } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const isAdmin = useSyncExternalStore(noSubscribe, hasAdminHint, () => false);
+  const links = isAdmin ? [...nav, { label: "Panel", href: "/admin" }] : nav;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -41,7 +48,7 @@ export function Header() {
             aria-label="Menú"
           >
             <ul className="container-roa flex flex-col py-3">
-              {nav.map((item) => (
+              {links.map((item) => (
                 <li key={item.href} className="border-b border-linea/60 last:border-0">
                   <Link href={item.href} className="block py-3.5 text-base text-tinta">
                     {item.label}
@@ -61,8 +68,9 @@ export function Header() {
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex" aria-label="Principal">
-          {nav.map((item) => {
-            const active = pathname === item.href;
+          {links.map((item) => {
+            const active =
+              item.href === "/admin" ? pathname.startsWith("/admin") : pathname === item.href;
             return (
               <Link
                 key={item.href}

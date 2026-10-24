@@ -7,6 +7,7 @@ import { SESSION_COOKIE, createSessionToken, verifyPassword } from "@/lib/auth";
 import { requireAdmin, slugify, uploadImage } from "@/lib/admin";
 import { getSupabase } from "@/lib/supabase";
 import { categories } from "@/lib/catalog";
+import { adminHintCookie } from "@/lib/site";
 import { fulfillmentSteps, updateOrderFulfillment, type Fulfillment } from "@/lib/orders";
 
 // Todas las acciones vuelven a la página con ?ok=... o ?error=... para mostrar
@@ -47,12 +48,19 @@ export async function login(formData: FormData) {
     path: "/",
     maxAge: 60 * 60 * 8,
   });
+  jar.set(adminHintCookie, "1", {
+    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 8,
+  });
   redirect("/admin");
 }
 
 export async function logout() {
   const jar = await cookies();
   jar.delete(SESSION_COOKIE);
+  jar.delete(adminHintCookie);
   redirect("/admin/login");
 }
 

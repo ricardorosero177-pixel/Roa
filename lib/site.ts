@@ -41,6 +41,13 @@ export const nav = [
   { label: "Devoluciones", href: "/politicas-devolucion" },
 ] as const;
 
+/**
+ * Cookie visible para el navegador que solo indica "hay sesión del panel" y
+ * permite mostrar el enlace "Panel" en el menú. No da acceso a nada: el panel
+ * siempre valida la cookie firmada roa_session en el servidor.
+ */
+export const adminHintCookie = "roa_admin";
+
 export function whatsappLink(message: string = site.whatsappMessage) {
   return `https://api.whatsapp.com/send/?phone=${site.contact.whatsapp}&text=${encodeURIComponent(
     message,
