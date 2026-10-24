@@ -10,6 +10,7 @@ const links = [
   { href: "/admin/cotizaciones", label: "Cotizaciones" },
   { href: "/admin/blog", label: "Blog" },
   { href: "/admin/resenas", label: "Reseñas" },
+  { href: "/admin/devoluciones", label: "Devoluciones" },
 ];
 
 export function AdminNav() {

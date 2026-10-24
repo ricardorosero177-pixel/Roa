@@ -133,7 +133,20 @@ alter table public.reviews enable row level security;
 revoke all on public.reviews from anon, authenticated;
 
 
--- 10) Carpeta pública para las fotos que se suben desde el panel.
+-- 10) Páginas de texto editables (política de devoluciones)
+create table if not exists public.pages (
+  slug text primary key,
+  title text not null,
+  intro text not null default '',
+  content text not null,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.pages enable row level security;
+revoke all on public.pages from anon, authenticated;
+
+
+-- 11) Carpeta pública para las fotos que se suben desde el panel.
 --     Cualquiera puede VER las fotos; solo el servidor (service role) puede subirlas.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('imagenes', 'imagenes', true, 5242880, array['image/jpeg', 'image/png', 'image/webp'])

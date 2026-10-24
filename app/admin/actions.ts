@@ -8,6 +8,7 @@ import { requireAdmin, slugify, uploadImage } from "@/lib/admin";
 import { getSupabase } from "@/lib/supabase";
 import { categories } from "@/lib/catalog";
 import { adminHintCookie } from "@/lib/site";
+import { editablePages, isEditablePage } from "@/lib/pages";
 import { fulfillmentSteps, updateOrderFulfillment, type Fulfillment } from "@/lib/orders";
 
 // Todas las acciones vuelven a la página con ?ok=... o ?error=... para mostrar
@@ -212,6 +213,33 @@ export async function deletePost(formData: FormData) {
   if (error) back("/admin/blog", "error", `No se pudo eliminar: ${error.message}`);
   refreshStore();
   back("/admin/blog", "ok", "Artículo eliminado.");
+}
+
+// ---------- Páginas de texto (política de devoluciones) ----------
+
+export async function savePage(formData: FormData) {
+  await requireAdmin();
+  const slug = text(formData, "slug", 80);
+  if (!isEditablePage(slug)) back("/admin", "error", "Página desconocida.");
+  const formPath = "/admin/devoluciones";
+  const supabase = db(formPath);
+
+  const title = text(formData, "title", 120);
+  const content = text(formData, "content", 30000);
+  if (!title) back(formPath, "error", "Falta el título.");
+  if (!content) back(formPath, "error", "Escribe el contenido.");
+
+  const { error } = await supabase.from("pages").upsert({
+    slug,
+    title,
+    intro: text(formData, "intro", 600),
+    content,
+    updated_at: new Date().toISOString(),
+  });
+  if (error) back(formPath, "error", `No se pudo guardar: ${error.message}`);
+
+  revalidatePath(editablePages[slug].path);
+  back(formPath, "ok", "Guardaste los cambios. Ya se ven en la tienda.");
 }
 
 // ---------- Reseñas ----------
