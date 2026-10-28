@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "./cart/CartContext";
-import { whatsappLink } from "@/lib/site";
 import { trackViewContent, trackAddToCart } from "@/lib/track";
 import type { Product } from "@/lib/types";
 
@@ -15,10 +14,6 @@ export function ProductActions({ product }: { product: Product }) {
   useEffect(() => {
     trackViewContent(product);
   }, [product]);
-
-  const wsp = whatsappLink(
-    `Hola RÖA 👋 Quiero comprar "${product.name}". ¿Me ayudas con el pago y el envío?`,
-  );
 
   return (
     <div className="mt-6 space-y-4">
@@ -44,12 +39,9 @@ export function ProductActions({ product }: { product: Product }) {
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row">
-        <a href={wsp} target="_blank" rel="noopener" className="btn-dorado flex-1">
-          Comprar por WhatsApp
-        </a>
         <button
           type="button"
-          className="btn-ghost flex-1"
+          className="btn-dorado flex-1"
           onClick={() => {
             add(product, qty);
             trackAddToCart(product);
